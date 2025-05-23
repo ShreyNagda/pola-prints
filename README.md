@@ -25,7 +25,7 @@ A React/Next.js client-side app that lets users upload an image and generate a c
 
 ## Demo
 
-(![Demo Screenshot](image.png))
+![Demo Screenshot](image.png)
 
 ---
 
@@ -94,6 +94,8 @@ date-fns for date formatting
 sonner for toast notifications
 
 HTML5 Canvas API for image composition
+
+---
 
 ## License
 
