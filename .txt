@@ -1,0 +1,196 @@
+bd4ChW1SyWXEu38l
+
+
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { createClient } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export default function PolaroidCreator() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [caption, setCaption] = useState<string>("My Polaroid 📸");
+  const [showDate, setShowDate] = useState<boolean>(true);
+  const [frame, setFrame] = useState<string>("classic");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUser(user);
+      }
+    };
+
+    fetchUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const frameStyles: Record<string, { bg: string; text: string }> = {
+    classic: { bg: "#ffffff", text: "#000000" },
+    black: { bg: "#000000", text: "#ffffff" },
+    retro: { bg: "#fdf3e7", text: "#3a2e25" },
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => setImage(img);
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+    drawCanvas();
+  };
+
+  const drawCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const { bg, text } = frameStyles[frame];
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const padding = 20;
+    const imgW = canvas.width - padding * 2;
+    const imgH = canvas.height - padding * 3 - 60;
+    if (image) ctx.drawImage(image, padding, padding, imgW, imgH);
+
+    ctx.fillStyle = text;
+    ctx.font = "20px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(caption, canvas.width / 2, canvas.height - 40);
+
+    if (showDate) {
+      const date = new Date().toLocaleDateString();
+      ctx.font = "14px sans-serif";
+      ctx.fillText(date, canvas.width / 2, canvas.height - 20);
+    }
+  };
+
+  const downloadImage = async () => {
+    // if (!user) {
+    //   toast.error("Please log in to download and save designs.");
+    //   return;
+    // }
+
+    setLoading(true);
+    drawCanvas();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const dataUrl = canvas.toDataURL();
+
+    // const { data, error } = await supabase.from("designs").insert([
+    //   {
+    //     user_id: user.id,
+    //     caption,
+    //     frame,
+    //     image_data: dataUrl,
+    //   },
+    // ]);
+
+    // if (error) {
+    //   toast.error("Error saving design.");
+    //   setLoading(false);
+    //   return;
+    // }
+
+    const link = document.createElement("a");
+    link.download = "polaroid.png";
+    link.href = dataUrl;
+    link.click();
+
+    toast.success("Polaroid saved and downloaded!");
+    setLoading(false);
+  };
+
+  const login = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "github",
+    });
+    if (error) toast.error("Login failed.");
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-gray-800 p-6">
+      <div className="mt-4 space-y-4">
+        <Input type="file" accept="image/*" onChange={handleImageUpload} />
+
+        <Input
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          placeholder="Your caption..."
+        />
+
+        <div className="flex items-center space-x-2">
+          <label htmlFor="frame-select">Frame:</label>
+          <select
+            id="frame-select"
+            value={frame}
+            onChange={(e) => setFrame(e.target.value)}
+            className="border rounded px-2 py-1"
+          >
+            <option value="classic">Classic</option>
+            <option value="black">Black</option>
+            <option value="retro">Retro</option>
+          </select>
+        </div>
+
+        <div className="flex gap-3">
+          <label className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              checked={showDate}
+              onChange={(e) => setShowDate(e.target.checked)}
+            />
+            <span>Show Date</span>
+          </label>
+
+          {showDate && <input type="date" />}
+        </div>
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={500}
+          className="mx-auto border rounded-md shadow-md max-w-full md:w-[400px]"
+        />
+
+        <Button
+          onClick={downloadImage}
+          disabled={loading}
+          className="bg-accent text-white"
+        >
+          {loading ? "Generating..." : "Download Polaroid"}
+        </Button>
+      </div>
+    </div>
+  );
+}
