@@ -59,22 +59,28 @@ yarn dev
 Open http://localhost:3000 in your browser.
 ```
 
-Usage
-Click Choose File to upload an image.
+---
 
-Enter a caption in the text input.
+## Usage
 
-Use the dropdown to select a frame style.
+- Click Choose File to upload an image.
 
-Toggle caption position between top and bottom.
+- Enter a caption in the text input.
 
-Check/uncheck Show Date and pick a date from the calendar.
+- Use the dropdown to select a frame style.
 
-Click Download Polaroid to save the generated image.
+- Toggle caption position between top and bottom.
 
-Click Reset to clear all inputs and start over.
+- Check/uncheck Show Date and pick a date from the calendar.
 
-Technologies Used
+- Click Download Polaroid to save the generated image.
+
+- Click Reset to clear all inputs and start over.
+
+---
+
+## Technologies Used
+
 React & Next.js (app router, client components)
 
 TypeScript
@@ -89,31 +95,6 @@ sonner for toast notifications
 
 HTML5 Canvas API for image composition
 
-Folder Structure
-bash
-Copy
-Edit
-/app
-/page.tsx # Main component with canvas and UI
-/components # UI components and helpers (Button, Select, Calendar, etc.)
-/lib
-utils.ts # Utility functions like `cn`
-/public
-/fonts # Custom fonts (Pacifico) if needed
-Notes
-The project uses the Canvas API to draw the image and overlays captions and date.
+## License
 
-The caption sanitization removes special characters to create safe filenames.
-
-The sonner toast system provides instant feedback on errors or success.
-
-The date picker uses shadcn/ui’s Calendar with a popover trigger.
-
-This app requires no backend or external API; everything runs client-side.
-
-License
 This project is licensed under the MIT License. See the LICENSE file for details.
-
-```
-
-```
