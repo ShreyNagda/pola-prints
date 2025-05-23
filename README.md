@@ -25,7 +25,7 @@ A React/Next.js client-side app that lets users upload an image and generate a c
 
 ## Demo
 
-![Screenshot](./screenshot.png)
+![Screenshot](![alt text](image.png))
 
 ---
 
@@ -33,12 +33,14 @@ A React/Next.js client-side app that lets users upload an image and generate a c
 
 1. Clone the repo:
 
-```bash
+````bash
 git clone https://github.com/yourusername/polaroid-image-generator.git
 cd polaroid-image-generator
+
+
 Install dependencies:
 
-bash
+```bash
 Copy
 Edit
 npm install
@@ -46,7 +48,7 @@ npm install
 yarn install
 Run the development server:
 
-bash
+```bash
 Copy
 Edit
 npm run dev
@@ -108,4 +110,4 @@ This app requires no backend or external API; everything runs client-side.
 
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
-```
+````
