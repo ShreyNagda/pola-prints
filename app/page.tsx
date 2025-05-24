@@ -74,7 +74,7 @@ export default function Home() {
     const dateHeight = showDate ? 48 : 0;
     const gapBetweenCaptionDate = hasCaption && showDate ? 30 : 0;
     const totalTextHeight = captionHeight + dateHeight + gapBetweenCaptionDate;
-    const extraMargin = 80; // extra spacing so text doesn't touch image
+    const extraMargin = 50; // extra spacing so text doesn't touch image
 
     // Calculate padding for top and bottom depending on caption position
     let paddingTop: number;
@@ -124,13 +124,13 @@ export default function Home() {
       }
       if (showDate && date) {
         dateY = hasCaption ? captionY + 48 + 30 : 130 + 48; // below caption or directly below top if no caption
-        ctx.font = "48px cursive";
+        ctx.font = hasCaption ? "48px cursive" : "80px 'Pacifico', cursive";
         ctx.fillText(format(date, "PPP"), canvas.width / 2, dateY);
       }
     } else {
       if (showDate && date) {
-        dateY = canvas.height - (paddingBottom - extraMargin - dateHeight + 10); // bottom date position
-        ctx.font = "48px cursive";
+        dateY = canvas.height - (paddingBottom - extraMargin - dateHeight - 10); // bottom date position
+        ctx.font = hasCaption ? "48px cursive" : "80px 'Pacifico', cursive";
         ctx.fillText(format(date, "PPP"), canvas.width / 2, dateY);
       }
       if (hasCaption) {
@@ -158,7 +158,9 @@ export default function Home() {
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
-      img.onload = () => setImage(img);
+      img.onload = () => {
+        setImage(img);
+      };
       img.onerror = () => {
         toast.error("Failed to load image.");
         setImage(null);
