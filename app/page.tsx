@@ -74,7 +74,7 @@ export default function Home() {
     const dateHeight = showDate ? 48 : 0;
     const gapBetweenCaptionDate = hasCaption && showDate ? 30 : 0;
     const totalTextHeight = captionHeight + dateHeight + gapBetweenCaptionDate;
-    const extraMargin = 30; // extra spacing so text doesn't touch image
+    const extraMargin = 80; // extra spacing so text doesn't touch image
 
     // Calculate padding for top and bottom depending on caption position
     let paddingTop: number;
