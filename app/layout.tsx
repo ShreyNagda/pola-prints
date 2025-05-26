@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "PolaPrints",
-  description: "Create Polaroids like images in seconds",
+  description: "Create Polaroids, save memories in seconds",
 };
 
 export default function RootLayout({
@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header />
-        <main className="min-h-[calc(100svh_-_100px)] flex flex-col items-center justify-center">
+        <main className="min-h-[calc(100svh_-_100px)] flex items-center justify-center bg-black">
           {children}
         </main>
         <Footer />
