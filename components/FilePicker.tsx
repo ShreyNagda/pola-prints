@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 type FilePickerProps = {
-  setImage: React.Dispatch<React.SetStateAction<File | null>>;
+  setImage: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export function FilePicker({ setImage }: FilePickerProps) {
@@ -9,12 +9,12 @@ export function FilePicker({ setImage }: FilePickerProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImage(file);
+      setImage(URL.createObjectURL(file));
     }
   };
   return (
     <div
-      className="h-full flex items-center justify-center cursor-pointer"
+      className="h-[200px] flex items-center justify-center cursor-pointer"
       onClick={() => fileRef.current?.click()}
     >
       <input
@@ -22,6 +22,7 @@ export function FilePicker({ setImage }: FilePickerProps) {
         id="filePicker"
         onChange={handleChange}
         className="hidden"
+        accept="image/*"
         ref={fileRef}
       />
       <label htmlFor="filePicker">Upload Image</label>
