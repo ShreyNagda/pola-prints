@@ -4,7 +4,8 @@ import { Area } from "react-easy-crop";
 import { FilePicker } from "./FilePicker";
 import { ImageCropper } from "./ImageCropper";
 import { useState } from "react";
-import { text } from "stream/consumers";
+// import { Image } from "next/image";
+// import Image from "next/image";
 
 interface PolaroidFrameProps {
   polaroidRef: React.RefObject<HTMLDivElement | null>;
@@ -35,7 +36,7 @@ export function PolaroidFrame({
 
     const ctx = canvasElement.getContext("2d");
 
-    let imgObject = new Image();
+    const imgObject = new Image();
     imgObject.src = imageFile!;
 
     imgObject.onload = function () {
@@ -87,6 +88,8 @@ export function PolaroidFrame({
           ) : imageAfterCrop == null ? (
             <img
               src={imageFile}
+              width={200}
+              height={200}
               alt="image"
               className="h-full w-full object-cover object-center"
             />

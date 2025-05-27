@@ -4,7 +4,7 @@ import { PolaroidFrame } from "@/components/PolaroidFrame";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { exportDivToCanvas } from "@/utils/exportDivToCanvas";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
             id="showDate"
             className="border-white"
             checked={showDate}
-            onCheckedChange={(value) => setShowDate(!showDate)}
+            onCheckedChange={() => setShowDate(!showDate)}
           />
           <label htmlFor="showDate">Show Date</label>
         </div>
