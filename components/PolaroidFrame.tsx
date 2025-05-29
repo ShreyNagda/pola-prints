@@ -4,8 +4,6 @@ import { Area } from "react-easy-crop";
 import { FilePicker } from "./FilePicker";
 import { ImageCropper } from "./ImageCropper";
 import { useState } from "react";
-// import { Image } from "next/image";
-// import Image from "next/image";
 
 interface PolaroidFrameProps {
   polaroidRef: React.RefObject<HTMLDivElement | null>;
@@ -13,17 +11,20 @@ interface PolaroidFrameProps {
   frameColor?: string;
   textColor?: string;
   fontFamily?: string;
+  dateFontFamily?: string;
 }
 
 export function PolaroidFrame({
   polaroidRef,
   showDate,
-  frameColor = "#fff",
+  frameColor = "#ffffff",
   textColor = "#000",
-  fontFamily = "Dancing Script",
+  fontFamily = "",
+  dateFontFamily = "",
 }: PolaroidFrameProps) {
   const [imageAfterCrop, setImageAfterCrop] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<string | null>(null);
+
   const [caption, setCaption] = useState("Your Caption");
   const [date, setDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -61,9 +62,12 @@ export function PolaroidFrame({
     setImageAfterCrop(imageFile);
   };
 
+  console.log(frameColor);
+
   return (
     <>
       <div
+        className="shadow-md"
         ref={polaroidRef}
         style={{
           height: "280px",
@@ -104,31 +108,33 @@ export function PolaroidFrame({
 
         <div className="w-full text-left">
           <input
+            autoComplete="off"
             type="text"
             style={{
               color: textColor,
-              fontFamily: `"${fontFamily}", "cursive"`,
               fontSize: "20px",
               fontWeight: "bold",
               width: "100%",
               border: "none",
               outline: "none",
-              backgroundColor: "transparent",
-
               marginTop: showDate ? 0 : "5px",
             }}
             value={caption}
             name="caption"
+            className={`bg-transparent ${fontFamily}`}
             onChange={(ev) => setCaption(ev.target.value)}
           />
 
           {showDate && (
             <input
               type="date"
+              className={`${dateFontFamily} appearance:none ${
+                textColor === "#fff" ? "calendar-dark" : "calendar-light"
+              }`}
               style={{
                 color: textColor,
                 fontSize: "15px",
-                fontWeight: "light",
+                fontWeight: "lighter",
                 width: "100%",
                 border: "none",
                 outline: "none",

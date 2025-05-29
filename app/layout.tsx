@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-// import { Header } from "@/components/Header";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { roboto } from "@/utils/fonts";
 
 export const metadata: Metadata = {
   title: "PolaPrints",
@@ -25,14 +15,12 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) { 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${roboto.className}  antialiased`}>
         <Header />
-        <main className="min-h-[calc(100svh_-_100px)] flex items-center justify-center bg-black">
+        <main className="min-h-[calc(100svh_-_100px)] flex items-center justify-center bg-slate-500">
           {children}
         </main>
         <Footer />
