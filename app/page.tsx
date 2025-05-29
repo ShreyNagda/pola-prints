@@ -7,6 +7,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -57,7 +58,7 @@ export default function Home() {
     }
   };
   return (
-    <div className="h-full flex flex-col justify-center gap-[5px]">
+    <div className="mx-auto w-full max-w-[300px] flex flex-col justify-center gap-4 md:gap-2 p-2">
       {/* Main Polaroid Preview */}
       <div className="flex flex-col items-center">
         <PolaroidFrame
@@ -85,8 +86,9 @@ export default function Home() {
         defaultValue={fontList[fontIndex].font.className}
         onValueChange={handleFontChange}
       >
-        <SelectTrigger className="w-[230px] focus:outline-none focus:ring-0">
+        <SelectTrigger className="w-full focus:outline-none focus:ring-0 relative">
           <SelectValue placeholder="Select a font" />
+          {/* <label className="absolute -top-4">Font</label> */}
         </SelectTrigger>
         <SelectContent>
           {fontList.map((font, index) => (
@@ -118,7 +120,7 @@ export default function Home() {
         })}
       </div>
 
-      <Button className="px-4 py-2 " onClick={handleDownload}>
+      <Button className="" onClick={handleDownload}>
         Capture Polaroid
       </Button>
     </div>
