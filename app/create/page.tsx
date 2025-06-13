@@ -21,10 +21,17 @@ import { exportDivToCanvas } from "@/utils/exportDivToCanvas";
 export default function Create() {
   const polaroidRef = useRef<HTMLDivElement>(null);
 
-  // const [caption, setCaption] = useState("Your Caption");
-  // const [date, setDate] = useState("");
-  // const [imageAfterCrop, setImageAfterCrop] = useState<string | null>(null);
-  // const [imageFile, setImageFile] = useState<string | null>(null);
+  const [data, setData] = useState<{
+    caption: string;
+    date: string;
+    imageFile: string | null;
+    imageAfterCrop: string | null;
+  }>({
+    caption: "Your Caption",
+    date: "",
+    imageFile: null,
+    imageAfterCrop: null,
+  });
   const [showDate, setShowDate] = useState(true);
   const [fontIndex, setFontIndex] = useState(0);
   const [frameIndex, setFrameIndex] = useState(0);
@@ -40,6 +47,12 @@ export default function Create() {
   }, []);
 
   const reset = useCallback(() => {
+    setData({
+      caption: "Your Caption",
+      date: "",
+      imageFile: null,
+      imageAfterCrop: null,
+    });
     setShowDate(true);
     setFontIndex(0);
     setFrameIndex(0);
@@ -73,7 +86,7 @@ export default function Create() {
               title: "My Polaroid",
               files: [file],
             });
-            toast.success("Shared successfully!");
+            toast.success("Share initiated!");
           } catch (error) {
             console.log(error);
             toast.error("Sharing failed.");
@@ -87,19 +100,25 @@ export default function Create() {
     }
   };
 
-  const currentColor = colorList[frameIndex];
-  const currentFont = fontList[fontIndex];
+  const currentColorScheme = {
+    frameColor: colorList[frameIndex].frame,
+    textColor: colorList[frameIndex].text,
+  };
+  const currentFontScheme = {
+    captionFont: fontList[fontIndex].font.className,
+    dateFont: fontList[fontIndex].secondary.className,
+  };
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-[#b78784] via-[#8e6e68] to-[#000]">
-      <div className="w-full max-w-xs md:max-w-md p-4  rounded-xl flex flex-col items-center gap-4">
+      <div className="w-full max-w-[300px] p-4 rounded-xl flex flex-col items-center gap-2">
         <PolaroidFrame
           polaroidRef={polaroidRef}
           showDate={showDate}
-          frameColor={currentColor.frame}
-          textColor={currentColor.text}
-          fontFamily={currentFont.font.className}
-          dateFontFamily={currentFont.secondary.className}
+          colorScheme={currentColorScheme}
+          fontScheme={currentFontScheme}
+          data={data}
+          setData={setData}
           reset={reset}
         />
 
@@ -114,7 +133,7 @@ export default function Create() {
         </div>
 
         <Select
-          defaultValue={currentFont.font.className}
+          defaultValue={currentFontScheme.captionFont}
           onValueChange={handleFontChange}
         >
           <SelectTrigger className="w-full">

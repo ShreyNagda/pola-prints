@@ -1,15 +1,16 @@
 import { useRef } from "react";
 
 type FilePickerProps = {
-  setImage: React.Dispatch<React.SetStateAction<string | null>>;
+  setImage: (value: string | null) => void;
 };
-
 export function FilePicker({ setImage }: FilePickerProps) {
   const fileRef = useRef<HTMLInputElement>(null);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setImage(URL.createObjectURL(file));
+    } else {
+      setImage(null);
     }
   };
   return (

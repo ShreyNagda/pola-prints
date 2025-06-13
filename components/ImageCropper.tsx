@@ -42,7 +42,7 @@ export function ImageCropper({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="link" className="w-full text-white underline">
+        <Button variant="link" className="text-white underline">
           Crop Image
         </Button>
       </DialogTrigger>

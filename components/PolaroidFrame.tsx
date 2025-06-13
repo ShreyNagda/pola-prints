@@ -19,25 +19,47 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 interface PolaroidFrameProps {
   polaroidRef: React.RefObject<HTMLDivElement | null>;
   showDate: boolean;
-  frameColor?: string;
-  textColor?: string;
-  fontFamily?: string;
-  dateFontFamily?: string;
+  colorScheme?: {
+    frameColor: string;
+    textColor: string;
+  };
+  fontScheme?: {
+    captionFont: string;
+    dateFont: string;
+  };
+  data: {
+    caption: string;
+    date: string;
+    imageFile: string | null;
+    imageAfterCrop: string | null;
+  };
+  setData: (
+    value: React.SetStateAction<{
+      caption: string;
+      date: string;
+      imageFile: string | null;
+      imageAfterCrop: string | null;
+    }>
+  ) => void;
+
   reset: () => void;
 }
 
 export function PolaroidFrame({
   polaroidRef,
   showDate,
-  frameColor = "#ffffff",
-  textColor = "#000",
-  fontFamily = "",
-  dateFontFamily = "",
+  colorScheme = {
+    frameColor: "#fff",
+    textColor: "#000",
+  },
+  fontScheme = {
+    captionFont: "",
+    dateFont: "",
+  },
+  data,
+  setData,
   reset,
 }: PolaroidFrameProps) {
-  const [imageAfterCrop, setImageAfterCrop] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<string | null>(null);
-  const [caption, setCaption] = useState("Your Caption");
   const [date, setDate] = useState("");
   const dateRef = useRef<HTMLInputElement>(null);
   const [formattedDate, setFormattedDate] = useState("");
@@ -56,7 +78,7 @@ export function PolaroidFrame({
 
     const ctx = canvasElement.getContext("2d");
     const imgObject = new window.Image();
-    imgObject.src = imageFile!;
+    imgObject.src = data.imageFile!;
 
     imgObject.onload = function () {
       ctx?.drawImage(
@@ -70,30 +92,33 @@ export function PolaroidFrame({
         croppedArea.width,
         croppedArea.height
       );
-      setImageAfterCrop(canvasElement.toDataURL("image/png"));
+      setData((prev) => ({
+        ...prev,
+        imageAfterCrop: canvasElement.toDataURL("image/png"),
+      }));
     };
   };
 
   const onCropCancel = () => {
-    setImageAfterCrop(imageFile);
+    setData((prev) => ({
+      ...prev,
+      imageAfterCrop: data.imageAfterCrop || data.imageFile,
+    }));
   };
 
   const resetData = () => {
-    setCaption("Your Caption");
-    setImageAfterCrop(null);
-    setImageFile(null);
     setDate("");
     setFormattedDate("");
     reset();
   };
 
   return (
-    <>
+    <div>
       <div
         className="shadow-md md:h-[280px] md:w-[230px] h-[300px] w-[250px]"
         ref={polaroidRef}
         style={{
-          backgroundColor: frameColor,
+          backgroundColor: colorScheme.frameColor,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -103,22 +128,26 @@ export function PolaroidFrame({
         <div
           className="md:h-[200px] md:w-[200px] h-[220px] w-[220px] relative"
           style={{
-            backgroundColor: textColor,
-            color: frameColor,
+            backgroundColor: colorScheme.textColor,
+            color: colorScheme.frameColor,
           }}
         >
-          {imageFile == null ? (
-            <FilePicker setImage={setImageFile} />
-          ) : imageAfterCrop == null ? (
+          {data.imageFile == null ? (
+            <FilePicker
+              setImage={(value) =>
+                setData((prev) => ({ ...prev, imageFile: value }))
+              }
+            />
+          ) : data.imageAfterCrop == null ? (
             <Image
-              src={imageFile}
+              src={data.imageFile}
               fill
               alt="image"
               className="h-full w-full object-center"
             />
           ) : (
             <Image
-              src={imageAfterCrop}
+              src={data.imageAfterCrop}
               alt="image"
               fill
               className="object-cover object-center"
@@ -131,7 +160,7 @@ export function PolaroidFrame({
             autoComplete="off"
             type="text"
             style={{
-              color: textColor,
+              color: colorScheme.textColor,
               fontSize: "18px",
               fontWeight: "bold",
               width: "100%",
@@ -139,10 +168,12 @@ export function PolaroidFrame({
               outline: "none",
               marginTop: showDate ? "5px" : "15px",
             }}
-            value={caption}
+            value={data.caption}
             name="caption"
-            className={`bg-transparent ${fontFamily}`}
-            onChange={(ev) => setCaption(ev.target.value)}
+            className={`bg-transparent ${fontScheme.captionFont}`}
+            onChange={(ev) =>
+              setData((prev) => ({ ...prev, caption: ev.target.value }))
+            }
           />
 
           {showDate && (
@@ -160,7 +191,7 @@ export function PolaroidFrame({
               <label
                 onClick={() => dateRef?.current?.showPicker?.()}
                 style={{
-                  color: textColor,
+                  color: colorScheme.textColor,
                   fontSize: "15px",
                   fontWeight: "lighter",
                   width: "100%",
@@ -170,7 +201,7 @@ export function PolaroidFrame({
                   display: "block",
                   cursor: "pointer",
                 }}
-                className={`${dateFontFamily}`}
+                className={`${fontScheme.dateFont}`}
               >
                 {formattedDate || "Select a date"}
               </label>
@@ -178,18 +209,16 @@ export function PolaroidFrame({
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between">
-        {imageFile && (
+      {data.imageFile && (
+        <div className="flex items-center justify-between w-full">
           <ImageCropper
-            image={imageFile}
+            image={data.imageFile}
             onCropDone={onCropDone}
             onCropCancel={onCropCancel}
           />
-        )}
-        {imageFile && (
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant={"link"} className="text-red-600 underline">
+              <Button variant={"link"} className="text-red-400 underline">
                 Reset
               </Button>
             </DialogTrigger>
@@ -210,8 +239,8 @@ export function PolaroidFrame({
               </div>
             </DialogContent>
           </Dialog>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 }
