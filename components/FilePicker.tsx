@@ -14,7 +14,7 @@ export function FilePicker({ setImage }: FilePickerProps) {
   };
   return (
     <div
-      className="h-[200px] flex items-center justify-center cursor-pointer"
+      className="h-[230px] md:h-[200px] flex items-center justify-center cursor-pointer"
       onClick={() => fileRef.current?.click()}
     >
       <input

@@ -1,127 +1,59 @@
 "use client";
-
-import { PolaroidFrame } from "@/components/PolaroidFrame";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import colorList from "@/utils/color";
-import { exportDivToCanvas } from "@/utils/exportDivToCanvas";
-import fontList from "@/utils/fonts";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
-
-export type FontStyle = {
-  name: string;
-  fontFamily: string;
-  secondaryFont?: string; // optional secondary font
-};
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
-  const [showDate, setShowDate] = useState(true);
-  const polaroidRef = useRef<HTMLDivElement>(null);
-
-  const [fontIndex, setFontIndex] = useState(0);
-  const [frameIndex, setFrameIndex] = useState(0);
-
-  const handleFontChange = (value: string) => {
-    const index = fontList.findIndex((f) => f.font.className === value);
-    if (index !== -1) setFontIndex(index);
-  };
-
-  const handleColorChange = (value: string) => {
-    const index = colorList.findIndex((c) => c.name === value);
-    if (index !== -1) setFrameIndex(index);
-  };
-
-  const reset = () => {
-    window.location.reload();
-  };
-
-  const handleDownload = async () => {
-    if (polaroidRef.current && polaroidRef.current.querySelector("img")) {
-      const canvas = await exportDivToCanvas(polaroidRef.current);
-      const link = document.createElement("a");
-      link.download = "polaroid.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      toast.success("Polaroid created successfully!");
-      reset();
-    } else {
-      toast.error("Please upload an image!");
-    }
-  };
   return (
-    <div className="mx-auto w-full max-w-[300px] flex flex-col justify-center gap-4 md:gap-2 p-2">
-      {/* Main Polaroid Preview */}
-      <div className="flex flex-col items-center">
-        <PolaroidFrame
-          polaroidRef={polaroidRef}
-          showDate={showDate}
-          frameColor={colorList[frameIndex].frame}
-          textColor={colorList[frameIndex].text}
-          fontFamily={fontList[fontIndex].font.className}
-          dateFontFamily={fontList[fontIndex].secondary.className}
+    <>
+      <Header />
+      <div className="relative flex-grow bg-gradient-to-b from-[#b78784] via-[#8e6e68] to-[#000] text-white overflow-hidden flex items-center justify-center">
+        {/* Background Image */}
+        <Image
+          src="/bg.jpg"
+          alt="Background"
+          fill
+          className="object-cover opacity-40"
+          priority
         />
-      </div>
 
-      {/* Show Date checkbox */}
-      <div className="flex gap-2 items-center bg-transparent">
-        <Checkbox
-          id="showDate"
-          className="border-white"
-          checked={showDate}
-          onCheckedChange={() => setShowDate(!showDate)}
-        />
-        <label htmlFor="showDate">Show Date</label>
-      </div>
-
-      <Select
-        defaultValue={fontList[fontIndex].font.className}
-        onValueChange={handleFontChange}
-      >
-        <SelectTrigger className="w-full focus:outline-none focus:ring-0 relative">
-          <SelectValue placeholder="Select a font" />
-          {/* <label className="absolute -top-4">Font</label> */}
-        </SelectTrigger>
-        <SelectContent>
-          {fontList.map((font, index) => (
-            <SelectItem key={index} value={font.font.className}>
-              {font.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <div className="py-1 grid grid-cols-3 items-center place-items-center">
-        {colorList.map((color, index) => {
-          return (
-            <div
-              key={index}
-              className={`p-1 rounded cursor-pointer hover:opacity-90 ${color} ${
-                index === frameIndex ? "border" : ""
-              }`}
-              onClick={() => handleColorChange(color.name)}
-            >
-              <div
-                className={`flex flex-col items-center justify-center py-2  px-1 rounded`}
-                style={{ backgroundColor: color.frame, color: color.text }}
-              >
-                {color.name}
+        {/* Overlay Content */}
+        <div className="relative z-10 flex items-center justify-center h-full md:px-20">
+          <div className="md:p-0 p-4 grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full max-w-6xl">
+            {/* Left Section - Text */}
+            <div className="space-y-6">
+              <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight ">
+                Capture. <br />
+                <span className="text-amber-400">Frame</span>. Cherish.
+              </h1>
+              <p className="text-lg text-gray-300 max-w-md">
+                Transform your memories into timeless art. Upload, customize,
+                and frame your moments.
+              </p>
+              <div>
+                <Link
+                  href={"/create"}
+                  className="mt-4 px-6 py-3 rounded-2xl bg-amber-400 text-black font-semibold hover:bg-amber-300 transition-all duration-300"
+                >
+                  Create Polaroids
+                </Link>
               </div>
             </div>
-          );
-        })}
-      </div>
 
-      <Button className="" onClick={handleDownload}>
-        Capture Polaroid
-      </Button>
-    </div>
+            {/* Right Section - Hero Image */}
+            <div className="relative w-full h-[350px] rounded-xl overflow-hidden shadow-2xl border-4 border-white">
+              <Image
+                src="/hero.jpg"
+                alt="Framed Memory"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 }
